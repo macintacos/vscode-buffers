@@ -1,25 +1,90 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
+import * as path from "path";
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
+  const disposable = vscode.commands.registerCommand(
+    "bufferList.showOpenBuffers",
+    async () => {
+      // Save the original active editor (MRU group)
+      const originalEditor = vscode.window.activeTextEditor;
+      const originalViewColumn = originalEditor
+        ? originalEditor.viewColumn
+        : vscode.ViewColumn.One;
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "buffer-list" is now active!');
+      // Retrieve open tabs from all groups (deduplicated by file `fsPath`)
+      const fileMap = new Map<string, vscode.Uri>();
+      if (vscode.window.tabGroups && vscode.window.tabGroups.all) {
+        for (const group of vscode.window.tabGroups.all) {
+          for (const tab of group.tabs) {
+            // Ensure we are only dealing with text editors
+            if (tab.input && (tab.input as any).uri) {
+              const uri = (tab.input as any).uri as vscode.Uri;
+              fileMap.set(uri.fsPath, uri);
+            }
+          }
+        }
+      } else {
+        // Fallback: use open text documents
+        vscode.workspace.textDocuments.forEach((doc) => {
+          if (!doc.isUntitled) {
+            fileMap.set(doc.uri.fsPath, doc.uri);
+          }
+        });
+      }
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	const disposable = vscode.commands.registerCommand('buffer-list.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from buffer-list!');
-	});
+      // Create a list of `QuickPickItems` from `fileMap`
+      const items: vscode.QuickPickItem[] = [];
+      fileMap.forEach((uri) => {
+        items.push({
+          label: path.basename(uri.fsPath),
+          description: uri.fsPath,
+        });
+      });
 
-	context.subscriptions.push(disposable);
+      // Create the `QuickPick`
+      const quickPick = vscode.window.createQuickPick();
+      quickPick.items = items;
+      quickPick.placeholder = "Select an open file...";
+      quickPick.matchOnDescription = true;
+      quickPick.matchOnDetail = true;
+
+      // Preview the file in the MRU group as user hovers on an item.
+      quickPick.onDidChangeSelection(async (selection) => {
+        if (selection[0]) {
+          const selectedUri = vscode.Uri.file(selection[0].description!);
+          await vscode.window.showTextDocument(selectedUri, {
+            preview: true,
+            viewColumn: originalViewColumn,
+          });
+        }
+      });
+
+      quickPick.onDidAccept(async () => {
+        const selected = quickPick.selectedItems[0];
+        if (selected) {
+          const selectedUri = vscode.Uri.file(selected.description!);
+          // Open the file in the current editor group and make it active.
+          await vscode.window.showTextDocument(selectedUri, { preview: false });
+        }
+        quickPick.hide();
+      });
+
+      quickPick.onDidHide(async () => {
+        // If canceled, restore original editor
+        if (originalEditor && originalEditor.document) {
+          await vscode.window.showTextDocument(originalEditor.document, {
+            preview: false,
+            viewColumn: originalViewColumn,
+          });
+        }
+        quickPick.dispose();
+      });
+
+      quickPick.show();
+    }
+  );
+
+  context.subscriptions.push(disposable);
 }
 
 // This method is called when your extension is deactivated

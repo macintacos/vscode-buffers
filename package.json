@@ -1,6 +1,6 @@
 {
-  "name": "buffer-list",
-  "displayName": "buffer-list",
+  "name": "bufferList",
+  "displayName": "Buffer List",
   "description": "A simple extension to show a list of open buffers to open in the current editor",
   "version": "0.0.1",
   "engines": {
@@ -14,8 +14,8 @@
   "contributes": {
     "commands": [
       {
-        "command": "buffer-list.helloWorld",
-        "title": "Hello World"
+        "command": "bufferList.showOpenBuffers",
+        "title": "Show All Open Buffers"
       }
     ]
   },
@@ -45,5 +45,6 @@
     "typescript": "^5.7.3",
     "@vscode/test-cli": "^0.0.10",
     "@vscode/test-electron": "^2.4.1"
-  }
+  },
+  "packageManager": "pnpm@10.6.5+sha512.cdf928fca20832cd59ec53826492b7dc25dc524d4370b6b4adbf65803d32efaa6c1c88147c0ae4e8d579a6c9eec715757b50d4fa35eea179d868eada4ed043af"
 }
