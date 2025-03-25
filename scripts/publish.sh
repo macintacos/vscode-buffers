@@ -10,8 +10,7 @@ gum confirm "About to publish v$version_to_bump with the above changelog. Procee
 # Prepare the changelog, update package.json
 pnpm exec git-cliff --bump -o CHANGELOG.md
 git add . && git commit -m "prerelease: generate changelog for v$version_to_bump"
-pnpm version "$version_to_bump"
-git add . && git commit -m "prerelease: bump 'package.json' for v$version_to_bump"
+pnpm version "$version_to_bump" "prerelease: bump 'package.json' for v$version_to_bump"
 git push origin main
 
 # Actually package and release
