@@ -53,7 +53,11 @@ export function activate(context: vscode.ExtensionContext) {
         if (activeItems[0]) {
           const selectedUri = vscode.Uri.file(activeItems[0].description!);
           // Preview the file in the current editor group.
-          await vscode.window.showTextDocument(selectedUri, { preview: true });
+          await vscode.window.showTextDocument(selectedUri, {
+            preview: true,
+            preserveFocus: true,
+          });
+          vscode.commands.executeCommand("workbench.action.quickInputFocus");
         }
       });
 
@@ -65,17 +69,6 @@ export function activate(context: vscode.ExtensionContext) {
           await vscode.window.showTextDocument(selectedUri, { preview: false });
         }
         quickPick.hide();
-      });
-
-      quickPick.onDidHide(async () => {
-        // If canceled, restore original editor
-        if (originalEditor && originalEditor.document) {
-          await vscode.window.showTextDocument(originalEditor.document, {
-            preview: false,
-            viewColumn: originalViewColumn,
-          });
-        }
-        quickPick.dispose();
       });
 
       quickPick.show();
