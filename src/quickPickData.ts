@@ -41,7 +41,7 @@ export function getOpenFileQuickPickData(): {
   });
 
   // Get user setting for alphabetical order.
-  const config = vscode.workspace.getConfiguration("bufferList");
+  const config = vscode.workspace.getConfiguration("buffers");
   const alphabeticalOrder = config.get("alphabeticalOrder", false);
 
   if (alphabeticalOrder) {

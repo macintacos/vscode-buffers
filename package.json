@@ -1,7 +1,7 @@
 {
-  "name": "buffer-list",
-  "displayName": "Buffer List",
-  "description": "A simple extension to show a list of open buffers to open in the current editor",
+  "name": "buffers",
+  "displayName": "Buffers",
+  "description": "Vim-like buffer lists in VSCode",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.98.0"
@@ -14,20 +14,20 @@
   "contributes": {
     "commands": [
       {
-        "command": "bufferList.showOpenBuffers",
-        "title": "Show All Open Buffers"
+        "command": "buffers.showOpenBuffers",
+        "title": "Show Open Buffers"
       }
     ],
     "configuration": {
       "type": "object",
-      "title": "Buffer List",
+      "title": "Buffers",
       "properties": {
-        "bufferList.showPreviewsDuringNavigation": {
+        "buffers.showPreviewsDuringNavigation": {
           "type": "boolean",
           "default": true,
           "description": "Show file previews in the editor group while navigating the quick pick list."
         },
-        "bufferList.alphabeticalOrder": {
+        "buffers.alphabeticalOrder": {
           "type": "boolean",
           "default": false,
           "description": "Sort quick pick file list alphabetically. If false, the current file is moved to the top."

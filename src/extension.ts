@@ -3,10 +3,10 @@ import { getOpenFileQuickPickData } from "./quickPickData";
 
 export function activate(context: vscode.ExtensionContext) {
   const disposable = vscode.commands.registerCommand(
-    "bufferList.showOpenBuffers",
+    "buffers.showOpenBuffers",
     async () => {
       let accepted = false;
-      const config = vscode.workspace.getConfiguration("bufferList");
+      const config = vscode.workspace.getConfiguration("buffers");
       const { originalEditor, originalViewColumn, items } =
         getOpenFileQuickPickData();
 
