@@ -1,25 +1,59 @@
 import * as path from "path";
+import { regex } from "regex";
 
 export function getFileIconLabel(filePath: string): string {
-  const ext = path.extname(filePath);
-  let icon = "file";
-  switch (ext) {
-    case ".ts":
-    case ".js":
-      icon = "file-code";
+  const fileName = path.basename(filePath);
+  let icon = "file-code";
+
+  switch (true) {
+    // Complicated conditions up here
+    case regex`(
+      CONDUCT|
+      CONTRIBUTING|
+      LICENSE|
+      MAINTAINERS|
+      README
+    )`.test(fileName):
+      icon = "book";
       break;
-    case ".json":
+    case regex`(
+        \.test\..*|   # e.g. ".test.js"
+        _test\.go|    # e.g. "blah_test.go"
+        test.*\.py    # e.g. "test_thing.py"
+      )`.test(fileName):
+      icon = "beaker";
+      break;
+    case regex`(
+        go\.(mod|sum)|
+        \.(
+          json|jsonc|toml|yml|yaml|
+          mailmap
+        )
+      )`.test(fileName):
       icon = "settings";
       break;
-    case ".html":
+    case /\.git(ignore|config)/.test(fileName):
+      icon = "git-merge";
+      break;
+
+    // Basic file extension checks down here
+    case /\.html?$/.test(fileName):
       icon = "code";
       break;
-    case ".css":
+    case /\.css$/.test(fileName):
       icon = "symbol-color";
       break;
-    // ...add more mappings as needed...
+    case /\.md(|x)$/.test(fileName):
+      icon = "markdown";
+      break;
+    case /\.(png|svg|jpg|jpeg|mp4)/.test(fileName):
+      icon = "attach";
+      break;
+
+    // Default to whatever `icon` is.
     default:
-      icon = "file";
+      break;
   }
-  return `$(${icon}) ${path.basename(filePath)}`;
+
+  return `$(${icon})  ${fileName}`;
 }
