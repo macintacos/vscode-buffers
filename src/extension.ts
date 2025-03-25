@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import * as path from "path";
+import { getFileIconLabel } from "./fileIcon";
 
 export function activate(context: vscode.ExtensionContext) {
   const disposable = vscode.commands.registerCommand(
@@ -36,7 +37,7 @@ export function activate(context: vscode.ExtensionContext) {
       const items: vscode.QuickPickItem[] = [];
       fileMap.forEach((uri) => {
         items.push({
-          label: path.basename(uri.fsPath),
+          label: getFileIconLabel(uri.fsPath),
           description: uri.fsPath,
         });
       });
@@ -61,6 +62,7 @@ export function activate(context: vscode.ExtensionContext) {
         }
       });
 
+      let accepted = false;
       quickPick.onDidAccept(async () => {
         const selected = quickPick.selectedItems[0];
         if (selected) {
@@ -68,7 +70,20 @@ export function activate(context: vscode.ExtensionContext) {
           // Open the file in the current editor group and make it active.
           await vscode.window.showTextDocument(selectedUri, { preview: false });
         }
+
+        accepted = true;
         quickPick.hide();
+      });
+
+      quickPick.onDidHide(async () => {
+        // If canceled, restore original editor
+        if (originalEditor && originalEditor.document && !accepted) {
+          await vscode.window.showTextDocument(originalEditor.document, {
+            preview: false,
+            viewColumn: originalViewColumn,
+          });
+        }
+        quickPick.dispose();
       });
 
       quickPick.show();
