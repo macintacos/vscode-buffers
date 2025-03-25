@@ -48,14 +48,12 @@ export function activate(context: vscode.ExtensionContext) {
       quickPick.matchOnDescription = true;
       quickPick.matchOnDetail = true;
 
-      // Preview the file in the MRU group as user hovers on an item.
-      quickPick.onDidChangeSelection(async (selection) => {
-        if (selection[0]) {
-          const selectedUri = vscode.Uri.file(selection[0].description!);
-          await vscode.window.showTextDocument(selectedUri, {
-            preview: true,
-            viewColumn: originalViewColumn,
-          });
+      // Preview the file in the current editor group as user hovers on an item.
+      quickPick.onDidChangeActive(async (activeItems) => {
+        if (activeItems[0]) {
+          const selectedUri = vscode.Uri.file(activeItems[0].description!);
+          // Preview the file in the current editor group.
+          await vscode.window.showTextDocument(selectedUri, { preview: true });
         }
       });
 
