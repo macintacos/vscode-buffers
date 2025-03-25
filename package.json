@@ -26,6 +26,11 @@
           "type": "boolean",
           "default": true,
           "description": "Show file previews in the editor group while navigating the quick pick list."
+        },
+        "bufferList.alphabeticalOrder": {
+          "type": "boolean",
+          "default": false,
+          "description": "Sort quick pick file list alphabetically. If false, the current file is moved to the top."
         }
       }
     }

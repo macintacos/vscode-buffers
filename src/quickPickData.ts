@@ -40,8 +40,13 @@ export function getOpenFileQuickPickData(): {
     });
   });
 
-  // Reorder items: move current file (if exists) to top.
-  if (originalEditor && originalEditor.document) {
+  // Get user setting for alphabetical order.
+  const config = vscode.workspace.getConfiguration("bufferList");
+  const alphabeticalOrder = config.get("alphabeticalOrder", false);
+
+  if (alphabeticalOrder) {
+    items.sort((a, b) => a.label.localeCompare(b.label));
+  } else if (originalEditor && originalEditor.document) {
     const currentPath = originalEditor.document.uri.fsPath;
     items = items.filter((item) => item.description !== currentPath);
     items.unshift({
