@@ -1,5 +1,5 @@
 {
-  "name": "bufferList",
+  "name": "buffer-list",
   "displayName": "Buffer List",
   "description": "A simple extension to show a list of open buffers to open in the current editor",
   "version": "0.0.1",
@@ -17,7 +17,18 @@
         "command": "bufferList.showOpenBuffers",
         "title": "Show All Open Buffers"
       }
-    ]
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Buffer List",
+      "properties": {
+        "bufferList.showPreviewsDuringNavigation": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show file previews in the editor group while navigating the quick pick list."
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "pnpm run package",

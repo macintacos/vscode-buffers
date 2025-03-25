@@ -1,6 +1,4 @@
 import * as vscode from "vscode";
-import * as path from "path";
-import { getFileIconLabel } from "./fileIcon";
 import { getOpenFileQuickPickData } from "./quickPickData";
 
 export function activate(context: vscode.ExtensionContext) {
@@ -8,6 +6,7 @@ export function activate(context: vscode.ExtensionContext) {
     "bufferList.showOpenBuffers",
     async () => {
       let accepted = false;
+      const config = vscode.workspace.getConfiguration("bufferList");
       const { originalEditor, originalViewColumn, items } =
         getOpenFileQuickPickData();
 
@@ -18,9 +17,12 @@ export function activate(context: vscode.ExtensionContext) {
       quickPick.matchOnDescription = true;
       quickPick.matchOnDetail = true;
 
-      // Preview the file in the current editor group as user hovers on an item.
+      // Support previewing the file in the current editor group as user hovers on an item.
       quickPick.onDidChangeActive(async (activeItems) => {
-        if (activeItems[0]) {
+        if (
+          activeItems[0] &&
+          config.get("showPreviewsDuringNavigation", true)
+        ) {
           const selectedUri = vscode.Uri.file(activeItems[0].description!);
           // Preview the file in the current editor group.
           await vscode.window.showTextDocument(selectedUri, {
@@ -30,6 +32,7 @@ export function activate(context: vscode.ExtensionContext) {
         }
       });
 
+      // Make the selected file the current file in the current editor group.
       quickPick.onDidAccept(async () => {
         const selected = quickPick.selectedItems[0];
         if (selected) {
@@ -42,6 +45,7 @@ export function activate(context: vscode.ExtensionContext) {
         quickPick.hide();
       });
 
+      // If the user dismisses the modal, return back to the original file if they didn't select one from the quick pick list.
       quickPick.onDidHide(async () => {
         // If canceled, restore original editor
         if (originalEditor && originalEditor.document && !accepted) {
