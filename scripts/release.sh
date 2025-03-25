@@ -10,9 +10,10 @@ gum confirm "About to publish v$version_to_bump with the above changelog. Procee
 # Prepare the changelog, update package.json
 pnpm exec git-cliff --bump -o CHANGELOG.md
 git add . && git commit -m "prerelease: generate changelog for v$version_to_bump"
-pnpm version "$version_to_bump" "prerelease: bump 'package.json' for v$version_to_bump"
+pnpm version "$version_to_bump" -m "prerelease: bump 'package.json' for v$version_to_bump"
 git push origin main
+git push origin tag "$version_to_bump"
 
 # Actually package and release
 pnpm run vscode:prepublish
-pnpm exec vsce package && pnpm exec vsce publish "$version_to_bump"
+pnpm exec vsce publish "$version_to_bump"
