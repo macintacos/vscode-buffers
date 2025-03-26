@@ -3,6 +3,7 @@
   "displayName": "Buffers",
   "description": "Vim-like buffer lists in VSCode",
   "version": "0.1.0",
+  "publisher": "excessive-dev",
   "engines": {
     "vscode": "^1.98.0"
   },
