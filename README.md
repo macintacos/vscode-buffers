@@ -39,6 +39,10 @@ Inspired by this issue from 2021: https://github.com/microsoft/vscode/issues/128
 - `bufferList.showPreviewsDuringNavigation`: Uncheck this if you don't want to have previews of the files as you navigate the list. Defaults to `true`.
 - `bufferList.alphabeticalOrder`: Check this if you want the list to be in alphabetical order. Defaults to `false`.
 
+## Contributing
+
+See: [CONTRIBUTING.md](./CONTRIBUTING.md)
+
 ## Changelog
 
 See: [CHANGELOG.md](./CHANGELOG.md)
